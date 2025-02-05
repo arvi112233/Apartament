@@ -13,7 +13,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     menuToggle.addEventListener('click', () => {
         navLinks.classList.toggle('active');
-        // Change icon based on menu state
         const icon = menuToggle.querySelector('i');
         if (navLinks.classList.contains('active')) {
             icon.classList.remove('fa-bars');
@@ -22,6 +21,55 @@ document.addEventListener('DOMContentLoaded', () => {
             icon.classList.remove('fa-times');
             icon.classList.add('fa-bars');
         }
+    });
+
+    // Add animation classes to elements
+    document.querySelector('.hero-content')?.classList.add('fade-up');
+    document.querySelector('.location-card')?.classList.add('fade-up');
+    document.querySelectorAll('.gallery-item').forEach((item, index) => {
+        item.classList.add('fade-up');
+        item.style.transitionDelay = `${index * 0.1}s`;
+    });
+    document.querySelectorAll('.feature-card').forEach((item, index) => {
+        item.classList.add('fade-up');
+        item.style.transitionDelay = `${index * 0.1}s`;
+    });
+    document.querySelectorAll('.footer-section').forEach((item, index) => {
+        item.classList.add('fade-up');
+        item.style.transitionDelay = `${index * 0.1}s`;
+    });
+
+    // Intersection Observer for scroll animations
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            // Remove transition delay when element leaves viewport
+            if (!entry.isIntersecting) {
+                entry.target.classList.remove('visible');
+                // Wait for animation to complete before resetting delay
+                setTimeout(() => {
+                    if (!entry.target.classList.contains('visible')) {
+                        entry.target.style.transitionDelay = '0s';
+                    }
+                }, 300);
+            } else {
+                // Restore original transition delay and add visible class
+                const index = Array.from(entry.target.parentNode.children).indexOf(entry.target);
+                if (entry.target.classList.contains('gallery-item') || 
+                    entry.target.classList.contains('feature-card') || 
+                    entry.target.classList.contains('footer-section')) {
+                    entry.target.style.transitionDelay = `${index * 0.1}s`;
+                }
+                entry.target.classList.add('visible');
+            }
+        });
+    }, {
+        threshold: 0.2, // More precise trigger point
+        rootMargin: '-50px 0px' // Trigger slightly before element enters viewport
+    });
+
+    // Observe all elements with animation classes
+    document.querySelectorAll('.fade-up, .fade-in, .slide-in-left, .slide-in-right').forEach(element => {
+        observer.observe(element);
     });
 
     // Close mobile menu when clicking outside
@@ -41,6 +89,26 @@ document.addEventListener('DOMContentLoaded', () => {
             const icon = menuToggle.querySelector('i');
             icon.classList.remove('fa-times');
             icon.classList.add('fa-bars');
+        });
+    });
+
+    // Smooth scroll for navigation links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth'
+                });
+                // Close mobile menu if open
+                if (navLinks.classList.contains('active')) {
+                    navLinks.classList.remove('active');
+                    const icon = menuToggle.querySelector('i');
+                    icon.classList.remove('fa-times');
+                    icon.classList.add('fa-bars');
+                }
+            }
         });
     });
 
@@ -85,17 +153,4 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
-
-    // Smooth scrolling for navigation links
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-            e.preventDefault();
-            const target = document.querySelector(this.getAttribute('href'));
-            if (target) {
-                target.scrollIntoView({
-                    behavior: 'smooth'
-                });
-            }
-        });
-    });
 });
