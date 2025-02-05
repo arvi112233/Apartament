@@ -29,6 +29,12 @@ nav {
     font-size: 1.5rem;
     font-weight: 600;
     color: #2563eb;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.logo:hover {
+    color: #1d4ed8;
 }
 
 .menu-toggle {
@@ -128,7 +134,7 @@ nav {
     background: rgba(255, 255, 255, 0.1);
 }
 
-/* Location Highlight */
+/* Location Section */
 .location-highlight {
     background: white;
     padding: 4rem 5%;
@@ -141,28 +147,35 @@ nav {
 
 .location-card {
     background: #f8fafc;
-    padding: 3rem;
+    padding: 2rem;
     border-radius: 15px;
     text-align: center;
     box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 }
 
-.location-card i {
-    font-size: 3rem;
-    color: #2563eb;
-    margin-bottom: 1.5rem;
-}
-
 .location-card h2 {
     color: #1e40af;
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
     font-size: 2.5rem;
 }
 
-.location-card p {
+.map-container {
+    width: 100%;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+}
+
+.map-container iframe {
+    width: 100%;
+    height: 450px;
+    border: none;
+}
+
+.location-address {
     color: #64748b;
-    margin-bottom: 2rem;
     font-size: 1.2rem;
+    margin-top: 1rem;
 }
 
 .location-features {
@@ -190,6 +203,16 @@ nav {
 .location-feature span {
     color: #333;
     font-weight: 500;
+}
+
+@media (max-width: 768px) {
+    .map-container iframe {
+        height: 350px;
+    }
+    
+    .location-card h2 {
+        font-size: 2rem;
+    }
 }
 
 /* Welcome Section */
@@ -517,6 +540,86 @@ footer {
 
 .footer-bottom p {
     color: #333;
+}
+
+/* Scroll Animations */
+.fade-up {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+                transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: opacity, transform;
+}
+
+.fade-up.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.fade-in {
+    opacity: 0;
+    transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: opacity;
+}
+
+.fade-in.visible {
+    opacity: 1;
+}
+
+.slide-in-left {
+    opacity: 0;
+    transform: translateX(-30px);
+    transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+                transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: opacity, transform;
+}
+
+.slide-in-left.visible {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.slide-in-right {
+    opacity: 0;
+    transform: translateX(30px);
+    transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+                transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: opacity, transform;
+}
+
+.slide-in-right.visible {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* Gallery and Feature Items Animation */
+.gallery-item, .feature-card {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+                transform 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+                box-shadow 0.3s ease;
+    will-change: opacity, transform;
+}
+
+.gallery-item.visible, .feature-card.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Reset transitions when not visible */
+.gallery-item:not(.visible), 
+.feature-card:not(.visible), 
+.fade-up:not(.visible),
+.fade-in:not(.visible),
+.slide-in-left:not(.visible),
+.slide-in-right:not(.visible) {
+    transition-delay: 0s !important;
+}
+
+/* Smooth Scroll Behavior */
+html {
+    scroll-behavior: smooth;
 }
 
 /* Responsive Design Updates */
