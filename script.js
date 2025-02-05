@@ -1,11 +1,11 @@
-// Add EmailJS SDK
-const emailJsScript = document.createElement('script');
-emailJsScript.src = 'https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js';
-document.head.appendChild(emailJsScript);
-
 document.addEventListener('DOMContentLoaded', () => {
-    // Initialize EmailJS with your public key
-    emailjs.init("w0Ck5MNoq8hlz0A5f");
+    // Initialize EmailJS
+    const emailJsScript = document.createElement('script');
+    emailJsScript.src = 'https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js';
+    document.head.appendChild(emailJsScript);
+    emailJsScript.onload = () => {
+        emailjs.init("w0Ck5MNoq8hlz0A5f");
+    };
 
     // Mobile Menu Toggle
     const menuToggle = document.querySelector('.menu-toggle');
@@ -23,55 +23,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Add animation classes to elements
-    document.querySelector('.hero-content')?.classList.add('fade-up');
-    document.querySelector('.location-card')?.classList.add('fade-up');
-    document.querySelectorAll('.gallery-item').forEach((item, index) => {
-        item.classList.add('fade-up');
-        item.style.transitionDelay = `${index * 0.1}s`;
-    });
-    document.querySelectorAll('.feature-card').forEach((item, index) => {
-        item.classList.add('fade-up');
-        item.style.transitionDelay = `${index * 0.1}s`;
-    });
-    document.querySelectorAll('.footer-section').forEach((item, index) => {
-        item.classList.add('fade-up');
-        item.style.transitionDelay = `${index * 0.1}s`;
-    });
-
-    // Intersection Observer for scroll animations
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            // Remove transition delay when element leaves viewport
-            if (!entry.isIntersecting) {
-                entry.target.classList.remove('visible');
-                // Wait for animation to complete before resetting delay
-                setTimeout(() => {
-                    if (!entry.target.classList.contains('visible')) {
-                        entry.target.style.transitionDelay = '0s';
-                    }
-                }, 300);
-            } else {
-                // Restore original transition delay and add visible class
-                const index = Array.from(entry.target.parentNode.children).indexOf(entry.target);
-                if (entry.target.classList.contains('gallery-item') || 
-                    entry.target.classList.contains('feature-card') || 
-                    entry.target.classList.contains('footer-section')) {
-                    entry.target.style.transitionDelay = `${index * 0.1}s`;
-                }
-                entry.target.classList.add('visible');
-            }
-        });
-    }, {
-        threshold: 0.2, // More precise trigger point
-        rootMargin: '-50px 0px' // Trigger slightly before element enters viewport
-    });
-
-    // Observe all elements with animation classes
-    document.querySelectorAll('.fade-up, .fade-in, .slide-in-left, .slide-in-right').forEach(element => {
-        observer.observe(element);
-    });
-
     // Close mobile menu when clicking outside
     document.addEventListener('click', (e) => {
         if (!menuToggle.contains(e.target) && !navLinks.contains(e.target)) {
@@ -82,14 +33,45 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Close mobile menu when clicking a link
-    navLinks.querySelectorAll('a').forEach(link => {
-        link.addEventListener('click', () => {
-            navLinks.classList.remove('active');
-            const icon = menuToggle.querySelector('i');
-            icon.classList.remove('fa-times');
-            icon.classList.add('fa-bars');
+    // Add animation classes to elements
+    const animatedElements = [
+        { selector: '.hero-content', delay: 0 },
+        { selector: '.location-card', delay: 0.2 },
+        { selector: '.gallery-item', delay: 0.1, multiple: true },
+        { selector: '.feature-card', delay: 0.1, multiple: true },
+        { selector: '.footer-section', delay: 0.1, multiple: true }
+    ];
+
+    animatedElements.forEach(({ selector, delay, multiple }) => {
+        const elements = multiple 
+            ? document.querySelectorAll(selector)
+            : [document.querySelector(selector)];
+
+        elements.forEach((element, index) => {
+            if (element) {
+                element.classList.add('fade-up');
+                element.style.transitionDelay = `${delay * (multiple ? index + 1 : 1)}s`;
+            }
         });
+    });
+
+    // Intersection Observer for scroll animations
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (!entry.isIntersecting) {
+                entry.target.classList.remove('visible');
+            } else {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, {
+        threshold: 0.2,
+        rootMargin: '-50px 0px'
+    });
+
+    // Observe all animated elements
+    document.querySelectorAll('.fade-up').forEach(element => {
+        observer.observe(element);
     });
 
     // Smooth scroll for navigation links
@@ -101,13 +83,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 target.scrollIntoView({
                     behavior: 'smooth'
                 });
-                // Close mobile menu if open
-                if (navLinks.classList.contains('active')) {
-                    navLinks.classList.remove('active');
-                    const icon = menuToggle.querySelector('i');
-                    icon.classList.remove('fa-times');
-                    icon.classList.add('fa-bars');
-                }
             }
         });
     });
@@ -118,7 +93,6 @@ document.addEventListener('DOMContentLoaded', () => {
         contactForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             
-            // Show loading state
             const submitBtn = contactForm.querySelector('.submit-btn');
             const originalBtnText = submitBtn.textContent;
             submitBtn.textContent = 'Sending...';
@@ -133,21 +107,18 @@ document.addEventListener('DOMContentLoaded', () => {
                     message: document.getElementById('message').value
                 };
 
-                // Send email using EmailJS
                 await emailjs.send(
                     'service_7c56m1r',
                     'template_dp6w1wl',
                     templateParams
                 );
 
-                // Show success message
                 alert('Thank you for your message! We will get back to you soon.');
                 contactForm.reset();
             } catch (error) {
                 console.error('Error sending email:', error);
                 alert('Sorry, there was an error sending your message. Please try again or contact us directly at rigertazani@gmail.com');
             } finally {
-                // Reset button state
                 submitBtn.textContent = originalBtnText;
                 submitBtn.disabled = false;
             }
